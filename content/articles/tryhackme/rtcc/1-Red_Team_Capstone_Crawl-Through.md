@@ -1,8 +1,9 @@
-﻿---
+---
 Name:
   - M. Walker
 THM Username:
   - Triage
+tags: []
 ---
 ***
 # 1 Red Team Capstone Challenge: My Struggle
