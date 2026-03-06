@@ -1,5 +1,7 @@
-﻿# Cybersecurity Writeups
+---
+title: Home
+---
 
-## TryHackMe
+<meta http-equiv="refresh" content="0; url=/cybersecurity-writeups/articles/tryhackme/rtcc/1-Red_Team_Capstone_Crawl-Through">
 
-- [Red Team Capstone Crawl Through](articles/tryhackme/rtcc/1-Red_Team_Capstone_Crawl-Through.md)
+If you are not redirected automatically, [open the article](/cybersecurity-writeups/articles/tryhackme/rtcc/1-Red_Team_Capstone_Crawl-Through).
