@@ -16,7 +16,7 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "quartz.jzhao.xyz",
+    baseUrl: "markus-doc.github.io/cybersecurity-writeups",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
@@ -61,8 +61,8 @@ const config: QuartzConfig = {
       }),
       Plugin.SyntaxHighlighting({
         theme: {
-          light: "github-light",
-          dark: "github-dark",
+          light: "one-light",
+          dark: "one-dark-pro",
         },
         keepBackground: false,
       }),
@@ -95,3 +95,4 @@ const config: QuartzConfig = {
 }
 
 export default config
+
