@@ -1,0 +1,42 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260308214539
+Username: DESKTOP1\marku
+RunAs User: DESKTOP1\marku
+Configuration Name: 
+Machine: DESKTOP1 (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 18888
+PSVersion: 5.1.26100.7705
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.7705
+BuildVersion: 10.0.26100.7705
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is D:\Quartz\quartz\logs\push_rtcc_utf8_guard_20260308_214538.log
+== Probe repo path ==
+== Probe git ==
+git found at C:\Program Files\Git\cmd\git.exe
+== Probe repository validity ==
+Repo root: D:/Quartz/quartz
+Current branch: v4
+== Probe files ==
+FOUND   content/articles/tryhackme/rtcc/1-Red_Team_Capstone_Crawl-Through.md
+MISSING  content/attachments/tryhackme/rtcc/Goal_tmux.png
+MISSING  content/attachments/tryhackme/rtcc/mindmap_Recon.png
+FOUND   content/attachments/tryhackme/rtcc/Network_Top_Map_start.png
+FOUND   content/attachments/tryhackme/rtcc/staff.png
+FOUND   content/attachments/tryhackme/rtcc/staff_roles_1.png
+FOUND   content/attachments/tryhackme/rtcc/staff_roles_2.png
+== Validate article bytes decode as UTF 8 ==
+== Scan article for common mojibake markers ==
+
+FAILED
+Possible mojibake found in article: â€
+**********************
+Windows PowerShell transcript end
+End time: 20260308214539
+**********************
