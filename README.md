@@ -1,17 +1,32 @@
-# Quartz v4
+# Cybersecurity write-ups
 
-> “[One] who works with the door open gets all kinds of interruptions, but [they] also occasionally gets clues as to what the world is and what might be important.” — Richard Hamming
+Articles, research notes, CTF write-ups and lab walkthroughs by Markus Walker.
 
-Quartz is a set of tools that helps you publish your [digital garden](https://jzhao.xyz/posts/networked-thought) and notes as a website for free.
+**Read them at [markus-doc.github.io/cybersecurity-writeups](https://markus-doc.github.io/cybersecurity-writeups/).**
+That is the formatted site, with navigation, backlinks and search. This repository is
+the source and build scaffolding behind it, and is not the place to read anything.
 
-🔗 Read the documentation and get started: https://quartz.jzhao.xyz/
+Current series: a full crawl-through of the TryHackMe Red Team Capstone Challenge,
+written as the work actually happened rather than as a tidy solution path, including
+the dead ends.
 
-[Join the Discord Community](https://discord.gg/cRFFHYye7t)
+More at [markuswalker.com](https://www.markuswalker.com/) and
+[github.com/Markus-Doc](https://github.com/Markus-Doc).
 
-## Sponsors
+## Layout
 
-<p align="center">
-  <a href="https://github.com/sponsors/jackyzha0">
-    <img src="https://cdn.jsdelivr.net/gh/jackyzha0/jackyzha0/sponsorkit/sponsors.svg" />
-  </a>
-</p>
+- `content/` holds the write-ups in Markdown. Everything worth reading is here.
+- `quartz/`, `quartz.config.ts` and `quartz.layout.ts` are the static site generator.
+- The site builds and deploys to GitHub Pages from `main` through a workflow.
+
+## Credits and licence
+
+The site is built on [Quartz v4](https://quartz.jzhao.xyz/) by Jacky Zhao, MIT
+licensed, and the MIT licence in `LICENSE.txt` covers it. Quartz's own documentation
+lives at [quartz.jzhao.xyz](https://quartz.jzhao.xyz/) and is the right reference for
+how the generator works; it used to occupy this README, which meant visitors landed on
+the generator's documentation rather than the write-ups.
+
+The write-ups themselves are the author's own work. Training-platform content, lab
+material, challenge artefacts and screenshots referenced in them remain the property
+of their respective owners and are not relicensed here.
