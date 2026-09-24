@@ -10,6 +10,10 @@ Current series: a full crawl-through of the TryHackMe Red Team Capstone Challeng
 written as the work actually happened rather than as a tidy solution path, including
 the dead ends.
 
+Status: written in early 2026 against the lab as it stood then. Room contents and
+tooling change over time, so treat commands and versions as a record of what worked
+on the day. Last reviewed September 2026.
+
 More at [markuswalker.com](https://www.markuswalker.com/) and
 [github.com/Markus-Doc](https://github.com/Markus-Doc).
 
