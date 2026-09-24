@@ -8209,7 +8209,7 @@ Medium-Term
 Long-Term
 1. Achieve Enterprise Admin in THERESERVE forest root
 2. Compromise all three domains (CORP, BANK, THERESERVE)
-3. Document complete attack path for TAFE submission
+3. Document complete attack path for the course submission
 
 **---**
 
